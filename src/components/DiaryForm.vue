@@ -1,0 +1,75 @@
+<script setup lang="ts">
+import type { DayStatus, DiaryRecord } from '../types/diary'
+
+const props = defineProps<{
+  dateLabel: string
+  record: DiaryRecord
+}>()
+
+const emit = defineEmits<{
+  'update:record': [record: DiaryRecord]
+}>()
+
+const statusOptions: Array<{ value: DayStatus; label: string }> = [
+  { value: null, label: '未入力' },
+  { value: 'headache', label: '頭痛あり' },
+  { value: 'notRefreshing', label: 'スッキリしなかった' },
+  { value: 'refreshing', label: 'スッキリしていた' },
+]
+
+const updateRecord = (updates: Partial<DiaryRecord>) => {
+  emit('update:record', {
+    ...props.record,
+    ...updates,
+  })
+}
+</script>
+
+<template>
+  <section class="diary-form" aria-label="日ごとの記録">
+    <div class="diary-form-header">
+      <p>選択中の日付</p>
+      <h2>{{ dateLabel }}</h2>
+    </div>
+
+    <fieldset class="status-field">
+      <legend>体調</legend>
+
+      <div class="status-options">
+        <label
+          v-for="option in statusOptions"
+          :key="option.label"
+          class="status-option"
+          :class="{ 'is-active': record.status === option.value }"
+        >
+          <input
+            type="radio"
+            name="day-status"
+            :checked="record.status === option.value"
+            @change="updateRecord({ status: option.value })"
+          />
+          <span>{{ option.label }}</span>
+        </label>
+      </div>
+    </fieldset>
+
+    <label class="medicine-option">
+      <input
+        type="checkbox"
+        :checked="record.medicine"
+        @change="updateRecord({ medicine: ($event.target as HTMLInputElement).checked })"
+      />
+      <span>痛み止め服用</span>
+    </label>
+
+    <label class="memo-field">
+      <span>メモ</span>
+      <textarea
+        :value="record.memo"
+        rows="4"
+        placeholder="症状、きっかけ、睡眠など"
+        @input="updateRecord({ memo: ($event.target as HTMLTextAreaElement).value })"
+      ></textarea>
+    </label>
+  </section>
+</template>
