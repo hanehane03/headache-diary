@@ -2,17 +2,23 @@
 import { computed, ref } from 'vue'
 import CalendarMonth from './components/CalendarMonth.vue'
 import DiaryForm from './components/DiaryForm.vue'
+import MonthSummary from './components/MonthSummary.vue'
 import type { DiaryRecord } from './types/diary'
+import { summarizeMonth } from './utils/summary'
+import { loadDiaryRecords, saveDiaryRecords } from './utils/storage'
 import { formatDateLabel, formatMonthLabel, toDateKey } from './utils/date'
 
 const today = new Date()
 const currentYear = ref(today.getFullYear())
 const currentMonth = ref(today.getMonth())
 const selectedDate = ref(toDateKey(today))
-const records = ref<DiaryRecord[]>([])
+const records = ref<DiaryRecord[]>(loadDiaryRecords())
 
 const monthLabel = computed(() => formatMonthLabel(currentYear.value, currentMonth.value))
 const selectedDateLabel = computed(() => formatDateLabel(selectedDate.value))
+const monthSummary = computed(() =>
+  summarizeMonth(records.value, currentYear.value, currentMonth.value),
+)
 
 const selectedRecord = computed<DiaryRecord>(() => {
   const record = records.value.find((item) => item.date === selectedDate.value)
@@ -51,6 +57,7 @@ const updateRecord = (record: DiaryRecord) => {
   }
 
   records.value = nextRecords
+  saveDiaryRecords(nextRecords)
 }
 </script>
 
@@ -66,6 +73,8 @@ const updateRecord = (record: DiaryRecord) => {
     </header>
 
     <section class="calendar-panel" aria-label="月表示カレンダー">
+      <MonthSummary :summary="monthSummary" />
+
       <div class="month-controls" aria-label="月の切り替え">
         <button type="button" @click="moveMonth(-1)">前月</button>
         <p>{{ monthLabel }}</p>
