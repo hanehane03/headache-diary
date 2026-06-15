@@ -97,7 +97,56 @@ h1 {
   box-shadow: var(--shadow);
 }
 
-.month-summary {
+.period-summary {
+  display: grid;
+  gap: 10px;
+}
+
+.summary-period-header {
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 12px;
+}
+
+.summary-period-header p {
+  margin: 0;
+  color: var(--text);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.period-inputs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.period-inputs label {
+  display: grid;
+  gap: 6px;
+}
+
+.period-inputs span {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.period-inputs input {
+  min-width: 0;
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 0 10px;
+  color: var(--text);
+  font: inherit;
+}
+
+.summary-cards {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
@@ -342,7 +391,8 @@ h1 {
 .month-controls button:focus-visible,
 .status-option:focus-within,
 .medicine-option:focus-within,
-.memo-field textarea:focus-visible {
+.memo-field textarea:focus-visible,
+.period-inputs input:focus-visible {
   outline: 3px solid rgba(62, 111, 103, 0.34);
   outline-offset: 2px;
 }
@@ -360,8 +410,12 @@ h1 {
     gap: 4px;
   }
 
-  .month-summary {
+  .summary-cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .period-inputs {
+    grid-template-columns: 1fr;
   }
 
   .summary-card {

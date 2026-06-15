@@ -30,10 +30,13 @@ export const isToday = (date: Date) => {
 
 export const buildMonthDays = (year: number, month: number): CalendarDay[] => {
   const firstDay = new Date(year, month, 1)
+  const lastDay = new Date(year, month + 1, 0)
   const startDate = new Date(year, month, 1 - firstDay.getDay())
   const days: CalendarDay[] = []
+  const weekCount = Math.ceil((firstDay.getDay() + lastDay.getDate()) / 7)
+  const visibleDayCount = weekCount * 7
 
-  for (let index = 0; index < 42; index += 1) {
+  for (let index = 0; index < visibleDayCount; index += 1) {
     const date = new Date(startDate)
     date.setDate(startDate.getDate() + index)
 

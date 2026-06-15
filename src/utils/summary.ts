@@ -1,24 +1,22 @@
 import type { DiaryRecord } from '../types/diary'
 
-export interface MonthSummary {
+export interface PeriodSummary {
   headacheDays: number
   medicineDays: number
   notRefreshingDays: number
   refreshingDays: number
 }
 
-const isRecordInMonth = (record: DiaryRecord, year: number, month: number) => {
-  const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}-`
-
-  return record.date.startsWith(monthPrefix)
+const isRecordInPeriod = (record: DiaryRecord, startDate: string, endDate: string) => {
+  return record.date >= startDate && record.date <= endDate
 }
 
-export const summarizeMonth = (
+export const summarizePeriod = (
   records: DiaryRecord[],
-  year: number,
-  month: number,
-): MonthSummary => {
-  const summary: MonthSummary = {
+  startDate: string,
+  endDate: string,
+): PeriodSummary => {
+  const summary: PeriodSummary = {
     headacheDays: 0,
     medicineDays: 0,
     notRefreshingDays: 0,
@@ -26,7 +24,7 @@ export const summarizeMonth = (
   }
 
   for (const record of records) {
-    if (!isRecordInMonth(record, year, month)) {
+    if (!isRecordInPeriod(record, startDate, endDate)) {
       continue
     }
 
