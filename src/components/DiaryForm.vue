@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import type { DayStatus, DiaryRecord } from '../types/diary'
+import type { DayStatus, DiaryRecord } from "../types/diary";
 
 const props = defineProps<{
-  dateLabel: string
-  record: DiaryRecord
-}>()
+  dateLabel: string;
+  record: DiaryRecord;
+}>();
 
 const emit = defineEmits<{
-  'update:record': [record: DiaryRecord]
-}>()
+  "update:record": [record: DiaryRecord];
+}>();
 
 const statusOptions: Array<{ value: DayStatus; label: string }> = [
-  { value: null, label: '未入力' },
-  { value: 'headache', label: '頭痛あり' },
-  { value: 'notRefreshing', label: 'スッキリしなかった' },
-  { value: 'refreshing', label: 'スッキリしていた' },
-]
+  { value: null, label: "未入力" },
+  { value: "headache", label: "頭痛あり" },
+  { value: "notRefreshing", label: "頭が重かった" },
+  { value: "refreshing", label: "スッキリしていた" },
+];
 
 const updateRecord = (updates: Partial<DiaryRecord>) => {
-  emit('update:record', {
+  emit("update:record", {
     ...props.record,
     ...updates,
-  })
-}
+  });
+};
 </script>
 
 <template>
@@ -57,7 +57,11 @@ const updateRecord = (updates: Partial<DiaryRecord>) => {
       <input
         type="checkbox"
         :checked="record.medicine"
-        @change="updateRecord({ medicine: ($event.target as HTMLInputElement).checked })"
+        @change="
+          updateRecord({
+            medicine: ($event.target as HTMLInputElement).checked,
+          })
+        "
       />
       <span>痛み止め服用</span>
     </label>
@@ -68,7 +72,9 @@ const updateRecord = (updates: Partial<DiaryRecord>) => {
         :value="record.memo"
         rows="4"
         placeholder="症状、きっかけ、睡眠など"
-        @input="updateRecord({ memo: ($event.target as HTMLTextAreaElement).value })"
+        @input="
+          updateRecord({ memo: ($event.target as HTMLTextAreaElement).value })
+        "
       ></textarea>
     </label>
   </section>
