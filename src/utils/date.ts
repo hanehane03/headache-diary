@@ -24,8 +24,31 @@ export const formatDateLabel = (dateKey: string) => {
   return `${year}年${month}月${day}日`
 }
 
+export const formatListDateLabel = (date: Date) => {
+  const weekLabels = ['日', '月', '火', '水', '木', '金', '土']
+
+  return `${date.getMonth() + 1}/${date.getDate()}（${weekLabels[date.getDay()]}）`
+}
+
 export const isToday = (date: Date) => {
   return toDateKey(date) === toDateKey(new Date())
+}
+
+export const buildCurrentMonthDays = (year: number, month: number): CalendarDay[] => {
+  const lastDay = new Date(year, month + 1, 0)
+  const days: CalendarDay[] = []
+
+  for (let day = 1; day <= lastDay.getDate(); day += 1) {
+    const date = new Date(year, month, day)
+
+    days.push({
+      date,
+      dateKey: toDateKey(date),
+      isCurrentMonth: true,
+    })
+  }
+
+  return days
 }
 
 export const buildMonthDays = (year: number, month: number): CalendarDay[] => {

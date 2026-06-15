@@ -87,6 +87,33 @@ h1 {
   font-weight: 700;
 }
 
+.view-switch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  margin-bottom: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-muted);
+  padding: 4px;
+}
+
+.view-switch button {
+  min-height: 44px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.view-switch button.is-active {
+  background: var(--surface);
+  color: var(--primary-strong);
+  box-shadow: 0 1px 4px rgba(54, 45, 34, 0.12);
+}
+
 .calendar-panel {
   display: grid;
   gap: 14px;
@@ -270,6 +297,48 @@ h1 {
   display: inline-block;
 }
 
+.diary-list {
+  display: grid;
+  gap: 6px;
+}
+
+.diary-list-row {
+  display: grid;
+  grid-template-columns: minmax(6.8rem, auto) 1fr;
+  gap: 12px;
+  align-items: center;
+  min-height: 48px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 0 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.diary-list-row.is-selected {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.diary-list-date {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.diary-list-status {
+  justify-self: end;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.diary-list-status.is-empty {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
 .diary-form {
   display: grid;
   gap: 18px;
@@ -388,6 +457,8 @@ h1 {
 
 .day-cell:focus-visible,
 .today-button:focus-visible,
+.view-switch button:focus-visible,
+.diary-list-row:focus-visible,
 .month-controls button:focus-visible,
 .status-option:focus-within,
 .medicine-option:focus-within,

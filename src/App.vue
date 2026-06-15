@@ -2,11 +2,14 @@
 import { computed, ref } from 'vue'
 import CalendarMonth from './components/CalendarMonth.vue'
 import DiaryForm from './components/DiaryForm.vue'
+import DiaryListView from './components/DiaryListView.vue'
 import PeriodSummary from './components/PeriodSummary.vue'
 import type { DiaryRecord } from './types/diary'
 import { summarizePeriod } from './utils/summary'
 import { loadDiaryRecords, saveDiaryRecords } from './utils/storage'
 import { formatDateLabel, formatMonthLabel, toDateKey } from './utils/date'
+
+type DisplayMode = 'calendar' | 'list'
 
 const today = new Date()
 const initialStartDate = new Date(today)
@@ -15,6 +18,7 @@ initialStartDate.setDate(today.getDate() - 28)
 const currentYear = ref(today.getFullYear())
 const currentMonth = ref(today.getMonth())
 const selectedDate = ref(toDateKey(today))
+const displayMode = ref<DisplayMode>('calendar')
 const summaryStartDate = ref(toDateKey(initialStartDate))
 const summaryEndDate = ref(toDateKey(today))
 const records = ref<DiaryRecord[]>(loadDiaryRecords())
@@ -77,7 +81,24 @@ const updateRecord = (record: DiaryRecord) => {
       <button class="today-button" type="button" @click="moveToToday">今日</button>
     </header>
 
-    <section class="calendar-panel" aria-label="月表示カレンダー">
+    <div class="view-switch" aria-label="表示切替">
+      <button
+        type="button"
+        :class="{ 'is-active': displayMode === 'calendar' }"
+        @click="displayMode = 'calendar'"
+      >
+        カレンダー
+      </button>
+      <button
+        type="button"
+        :class="{ 'is-active': displayMode === 'list' }"
+        @click="displayMode = 'list'"
+      >
+        リスト
+      </button>
+    </div>
+
+    <section class="calendar-panel" aria-label="記録表示">
       <PeriodSummary
         v-model:start-date="summaryStartDate"
         v-model:end-date="summaryEndDate"
@@ -91,6 +112,15 @@ const updateRecord = (record: DiaryRecord) => {
       </div>
 
       <CalendarMonth
+        v-if="displayMode === 'calendar'"
+        v-model:selected-date="selectedDate"
+        :records="records"
+        :year="currentYear"
+        :month="currentMonth"
+      />
+
+      <DiaryListView
+        v-else
         v-model:selected-date="selectedDate"
         :records="records"
         :year="currentYear"

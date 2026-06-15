@@ -3,7 +3,7 @@ import type { CalendarDay } from '../utils/date'
 import type { DiaryRecord } from '../types/diary'
 import { isToday } from '../utils/date'
 
-const props = defineProps<{
+defineProps<{
   day: CalendarDay
   selectedDate: string
   record?: DiaryRecord
