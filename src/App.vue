@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import BackupRestore from './components/BackupRestore.vue'
 import CalendarMonth from './components/CalendarMonth.vue'
 import DiaryForm from './components/DiaryForm.vue'
 import DiaryListView from './components/DiaryListView.vue'
@@ -68,6 +69,11 @@ const updateRecord = (record: DiaryRecord) => {
   records.value = nextRecords
   saveDiaryRecords(nextRecords)
 }
+
+const restoreRecords = (restoredRecords: DiaryRecord[]) => {
+  records.value = restoredRecords
+  saveDiaryRecords(restoredRecords)
+}
 </script>
 
 <template>
@@ -134,5 +140,7 @@ const updateRecord = (record: DiaryRecord) => {
       :record="selectedRecord"
       @update:record="updateRecord"
     />
+
+    <BackupRestore class="settings-section" :records="records" @restore="restoreRecords" />
   </main>
 </template>

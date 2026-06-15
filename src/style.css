@@ -208,6 +208,10 @@ h1 {
   margin-top: 14px;
 }
 
+.settings-section {
+  margin-top: 14px;
+}
+
 .month-controls {
   display: grid;
   grid-template-columns: minmax(68px, auto) 1fr minmax(68px, auto);
@@ -455,10 +459,48 @@ h1 {
   line-height: 1.5;
 }
 
+.backup-panel {
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+.backup-panel-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.backup-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.backup-actions button {
+  min-height: 48px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--primary-strong);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.backup-file-input {
+  display: none;
+}
+
 .day-cell:focus-visible,
 .today-button:focus-visible,
 .view-switch button:focus-visible,
 .diary-list-row:focus-visible,
+.backup-actions button:focus-visible,
 .month-controls button:focus-visible,
 .status-option:focus-within,
 .medicine-option:focus-within,
@@ -515,7 +557,15 @@ h1 {
     padding: 12px;
   }
 
+  .backup-panel {
+    padding: 12px;
+  }
+
   .status-options {
+    grid-template-columns: 1fr;
+  }
+
+  .backup-actions {
     grid-template-columns: 1fr;
   }
 }
