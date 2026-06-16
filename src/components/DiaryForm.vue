@@ -1,28 +1,46 @@
 <script setup lang="ts">
-import type { DayStatus, DiaryRecord } from "../types/diary";
+import type { DayStatus, DiaryRecord } from '../types/diary'
 
 const props = defineProps<{
-  dateLabel: string;
-  record: DiaryRecord;
-}>();
+  dateLabel: string
+  record: DiaryRecord
+}>()
 
 const emit = defineEmits<{
-  "update:record": [record: DiaryRecord];
-}>();
+  'update:record': [record: DiaryRecord]
+}>()
 
 const statusOptions: Array<{ value: DayStatus; label: string }> = [
-  { value: null, label: "未入力" },
-  { value: "headache", label: "頭痛あり" },
-  { value: "notRefreshing", label: "頭が重かった" },
-  { value: "refreshing", label: "スッキリしていた" },
-];
+  { value: null, label: '未入力' },
+  { value: 'headache', label: '頭痛あり' },
+  { value: 'notRefreshing', label: 'スッキリしなかった' },
+  { value: 'refreshing', label: 'スッキリしていた' },
+]
+
+const headacheLevelOptions = ['軽度', '中度', '重度'] as const
+const headacheLevelPattern = /\[(軽度|中度|重度)\]/
 
 const updateRecord = (updates: Partial<DiaryRecord>) => {
-  emit("update:record", {
+  emit('update:record', {
     ...props.record,
     ...updates,
-  });
-};
+  })
+}
+
+const applyHeadacheLevel = (level: (typeof headacheLevelOptions)[number]) => {
+  const levelText = `[${level}]`
+  const currentMemo = props.record.memo
+
+  if (currentMemo.includes(levelText)) {
+    return
+  }
+
+  const nextMemo = headacheLevelPattern.test(currentMemo)
+    ? currentMemo.replace(headacheLevelPattern, levelText)
+    : `${levelText}${currentMemo ? ` ${currentMemo}` : ''}`
+
+  updateRecord({ memo: nextMemo })
+}
 </script>
 
 <template>
@@ -57,14 +75,24 @@ const updateRecord = (updates: Partial<DiaryRecord>) => {
       <input
         type="checkbox"
         :checked="record.medicine"
-        @change="
-          updateRecord({
-            medicine: ($event.target as HTMLInputElement).checked,
-          })
-        "
+        @change="updateRecord({ medicine: ($event.target as HTMLInputElement).checked })"
       />
       <span>痛み止め服用</span>
     </label>
+
+    <div v-if="record.status === 'headache'" class="headache-level">
+      <span>頭痛レベル</span>
+      <div class="headache-level-actions">
+        <button
+          v-for="level in headacheLevelOptions"
+          :key="level"
+          type="button"
+          @click="applyHeadacheLevel(level)"
+        >
+          {{ level }}
+        </button>
+      </div>
+    </div>
 
     <label class="memo-field">
       <span>メモ</span>
@@ -72,9 +100,7 @@ const updateRecord = (updates: Partial<DiaryRecord>) => {
         :value="record.memo"
         rows="4"
         placeholder="症状、きっかけ、睡眠など"
-        @input="
-          updateRecord({ memo: ($event.target as HTMLTextAreaElement).value })
-        "
+        @input="updateRecord({ memo: ($event.target as HTMLTextAreaElement).value })"
       ></textarea>
     </label>
   </section>

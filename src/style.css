@@ -441,6 +441,33 @@ h1 {
   accent-color: var(--primary);
 }
 
+.headache-level {
+  display: grid;
+  gap: 8px;
+}
+
+.headache-level > span {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.headache-level-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.headache-level-actions button {
+  min-height: 46px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--primary-strong);
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .memo-field {
   display: grid;
   gap: 8px;
@@ -504,6 +531,7 @@ h1 {
 .month-controls button:focus-visible,
 .status-option:focus-within,
 .medicine-option:focus-within,
+.headache-level-actions button:focus-visible,
 .memo-field textarea:focus-visible,
 .period-inputs input:focus-visible {
   outline: 3px solid rgba(62, 111, 103, 0.34);
