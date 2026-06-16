@@ -2,6 +2,7 @@
 import type { CalendarDay } from '../utils/date'
 import type { DiaryRecord } from '../types/diary'
 import { isToday } from '../utils/date'
+import { getRecordIcons, getShortHeadacheLevel, hasRecordContent } from '../utils/recordDisplay'
 
 defineProps<{
   day: CalendarDay
@@ -12,12 +13,6 @@ defineProps<{
 const emit = defineEmits<{
   select: [dateKey: string]
 }>()
-
-const statusIconMap = {
-  headache: '😖',
-  notRefreshing: '😐',
-  refreshing: '😊',
-} as const
 </script>
 
 <template>
@@ -27,15 +22,17 @@ const statusIconMap = {
       'is-muted': !day.isCurrentMonth,
       'is-today': isToday(day.date),
       'is-selected': day.dateKey === selectedDate,
-      'has-record': record?.status !== null || record?.medicine,
+      'has-record': hasRecordContent(record),
     }"
     type="button"
     @click="emit('select', day.dateKey)"
   >
     <span class="day-number">{{ day.date.getDate() }}</span>
-    <span v-if="record?.status || record?.medicine" class="day-markers" aria-label="記録あり">
-      <span v-if="record.status">{{ statusIconMap[record.status] }}</span>
-      <span v-if="record.medicine">💊</span>
+    <span v-if="getRecordIcons(record).length > 0" class="day-markers" aria-label="記録あり">
+      <span v-for="icon in getRecordIcons(record)" :key="icon">{{ icon }}</span>
+      <span v-if="getShortHeadacheLevel(record)" class="day-level">
+        {{ getShortHeadacheLevel(record) }}
+      </span>
     </span>
   </button>
 </template>

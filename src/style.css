@@ -284,21 +284,44 @@ h1 {
 }
 
 .day-cell.has-record {
-  border-color: rgba(62, 111, 103, 0.42);
+  border-color: rgba(62, 111, 103, 0.64);
+  background: #eef7f3;
+}
+
+.day-cell.has-record::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--primary);
 }
 
 .day-markers {
   display: flex;
-  min-height: 1.25rem;
+  min-height: 1.35rem;
   align-items: center;
   justify-content: center;
-  gap: 1px;
-  font-size: clamp(0.92rem, 3.8vw, 1.12rem);
+  gap: 2px;
+  font-size: clamp(1.02rem, 4.2vw, 1.22rem);
   line-height: 1;
 }
 
 .day-markers span {
   display: inline-block;
+}
+
+.day-level {
+  min-width: 1.15rem;
+  border-radius: 999px;
+  background: var(--primary-strong);
+  color: #ffffff;
+  padding: 2px 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .diary-list {
@@ -325,6 +348,11 @@ h1 {
   background: var(--primary-soft);
 }
 
+.diary-list-row.has-record {
+  border-color: rgba(62, 111, 103, 0.45);
+  background: #f7fbf9;
+}
+
 .diary-list-date {
   color: var(--text);
   font-weight: 700;
@@ -332,9 +360,10 @@ h1 {
 
 .diary-list-status {
   justify-self: end;
-  font-size: 1.1rem;
+  font-size: 1.08rem;
   font-weight: 700;
-  line-height: 1;
+  line-height: 1.25;
+  text-align: right;
 }
 
 .diary-list-status.is-empty {

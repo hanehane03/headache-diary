@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import type { DiaryRecord } from '../types/diary'
 import { buildCurrentMonthDays, formatListDateLabel } from '../utils/date'
+import { getListRecordLabel } from '../utils/recordDisplay'
 
 const props = defineProps<{
   year: number
@@ -14,30 +15,10 @@ const emit = defineEmits<{
   'update:selectedDate': [date: string]
 }>()
 
-const statusIconMap = {
-  headache: '😖',
-  notRefreshing: '😐',
-  refreshing: '😊',
-} as const
-
 const days = computed(() => buildCurrentMonthDays(props.year, props.month))
 
 const findRecord = (dateKey: string) => {
   return props.records.find((record) => record.date === dateKey)
-}
-
-const formatRecordLabel = (record?: DiaryRecord) => {
-  const markers: string[] = []
-
-  if (record?.status) {
-    markers.push(statusIconMap[record.status])
-  }
-
-  if (record?.medicine) {
-    markers.push('💊')
-  }
-
-  return markers.length > 0 ? markers.join('') : '未入力'
 }
 </script>
 
@@ -47,16 +28,19 @@ const formatRecordLabel = (record?: DiaryRecord) => {
       v-for="day in days"
       :key="day.dateKey"
       class="diary-list-row"
-      :class="{ 'is-selected': day.dateKey === selectedDate }"
+      :class="{
+        'is-selected': day.dateKey === selectedDate,
+        'has-record': getListRecordLabel(findRecord(day.dateKey)) !== '未入力',
+      }"
       type="button"
       @click="emit('update:selectedDate', day.dateKey)"
     >
       <span class="diary-list-date">{{ formatListDateLabel(day.date) }}</span>
       <span
         class="diary-list-status"
-        :class="{ 'is-empty': formatRecordLabel(findRecord(day.dateKey)) === '未入力' }"
+        :class="{ 'is-empty': getListRecordLabel(findRecord(day.dateKey)) === '未入力' }"
       >
-        {{ formatRecordLabel(findRecord(day.dateKey)) }}
+        {{ getListRecordLabel(findRecord(day.dateKey)) }}
       </span>
     </button>
   </div>
