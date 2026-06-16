@@ -6,24 +6,35 @@ const statusIconMap = {
   refreshing: '😊',
 } as const
 
-const headacheLevelMap = {
-  軽度: {
-    shortLabel: '軽',
+const levelMap = {
+  '1': {
+    shortLabel: '1',
     tone: 'mild',
   },
-  中度: {
-    shortLabel: '中',
+  '2': {
+    shortLabel: '2',
     tone: 'moderate',
   },
-  重度: {
-    shortLabel: '重',
+  '3': {
+    shortLabel: '3',
     tone: 'severe',
   },
 } as const
 
-type HeadacheLevel = keyof typeof headacheLevelMap
+const legacyLevelMap = {
+  軽度: '1',
+  中度: '2',
+  重度: '3',
+} as const
 
-const headacheLevelPattern = /\[(軽度|中度|重度)\]/
+type Level = keyof typeof levelMap
+type LegacyLevel = keyof typeof legacyLevelMap
+
+const levelPattern = /\[(1|2|3|軽度|中度|重度)\]/
+
+const canShowLevel = (record?: DiaryRecord) => {
+  return record?.status === 'headache' || record?.status === 'notRefreshing'
+}
 
 export const hasRecordContent = (record?: DiaryRecord) => {
   return Boolean(record?.status || record?.medicine || record?.memo.trim())
@@ -43,25 +54,33 @@ export const getRecordIcons = (record?: DiaryRecord) => {
   return icons
 }
 
-export const getHeadacheLevel = (record?: DiaryRecord): HeadacheLevel | null => {
-  if (record?.status !== 'headache') {
+export const getSymptomLevel = (record?: DiaryRecord): Level | null => {
+  if (!record || !canShowLevel(record)) {
     return null
   }
 
-  const match = record.memo.match(headacheLevelPattern)
+  const match = record.memo.match(levelPattern)
 
-  return match ? (match[1] as HeadacheLevel) : null
+  if (!match) {
+    return null
+  }
+
+  const level = match[1]
+
+  return level in legacyLevelMap ? legacyLevelMap[level as LegacyLevel] : (level as Level)
 }
 
-export const getHeadacheLevelBadge = (record?: DiaryRecord) => {
-  const level = getHeadacheLevel(record)
+export const getHeadacheLevel = getSymptomLevel
 
-  return level ? headacheLevelMap[level] : null
+export const getHeadacheLevelBadge = (record?: DiaryRecord) => {
+  const level = getSymptomLevel(record)
+
+  return level ? levelMap[level] : null
 }
 
 export const getListRecordLabel = (record?: DiaryRecord) => {
   const icons = getRecordIcons(record).join('')
-  const level = getHeadacheLevel(record)
+  const level = getSymptomLevel(record)
 
   if (!icons && !level) {
     return '未入力'

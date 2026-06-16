@@ -3,6 +3,11 @@ import type { DayStatus, DiaryRecord } from '../types/diary'
 const STORAGE_KEY = 'headache-diary-records'
 const BACKUP_VERSION = 1
 const dayStatuses: DayStatus[] = ['headache', 'notRefreshing', 'refreshing', null]
+const legacyLevelReplacements: Array<[RegExp, string]> = [
+  [/\[軽度\]/g, '[1]'],
+  [/\[中度\]/g, '[2]'],
+  [/\[重度\]/g, '[3]'],
+]
 
 export interface DiaryBackup {
   version: typeof BACKUP_VERSION
@@ -29,6 +34,17 @@ export const isDiaryRecord = (value: unknown): value is DiaryRecord => {
   )
 }
 
+const normalizeDiaryRecord = (record: DiaryRecord): DiaryRecord => {
+  const memo = legacyLevelReplacements.reduce((nextMemo, [pattern, replacement]) => {
+    return nextMemo.replace(pattern, replacement)
+  }, record.memo)
+
+  return {
+    ...record,
+    memo,
+  }
+}
+
 export const loadDiaryRecords = (): DiaryRecord[] => {
   const storedRecords = localStorage.getItem(STORAGE_KEY)
 
@@ -43,14 +59,14 @@ export const loadDiaryRecords = (): DiaryRecord[] => {
       return []
     }
 
-    return parsedRecords.filter(isDiaryRecord)
+    return parsedRecords.filter(isDiaryRecord).map(normalizeDiaryRecord)
   } catch {
     return []
   }
 }
 
 export const saveDiaryRecords = (records: DiaryRecord[]) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(records))
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(records.map(normalizeDiaryRecord)))
 }
 
 const isDiaryBackup = (value: unknown): value is DiaryBackup => {
@@ -106,7 +122,7 @@ export const parseDiaryBackupFile = async (file: File): Promise<DiaryRecord[]> =
       throw new Error('Invalid backup format')
     }
 
-    return parsedBackup.records
+    return parsedBackup.records.map(normalizeDiaryRecord)
   } catch {
     throw new Error('Invalid backup format')
   }

@@ -17,9 +17,13 @@ const statusOptions: Array<{ value: DayStatus; label: string }> = [
   { value: 'refreshing', label: 'スッキリしていた' },
 ]
 
-const headacheLevelOptions = ['軽度', '中度', '重度'] as const
-const headacheLevelPattern = /\[(軽度|中度|重度)\]/
-const headacheLevelPatternGlobal = /\[(軽度|中度|重度)\]\s*/g
+const symptomLevelOptions = ['1', '2', '3'] as const
+const levelPattern = /\[(1|2|3|軽度|中度|重度)\]/
+const levelPatternGlobal = /\[(1|2|3|軽度|中度|重度)\]\s*/g
+
+const canUseSymptomLevel = (status: DayStatus) => {
+  return status === 'headache' || status === 'notRefreshing'
+}
 
 const updateRecord = (updates: Partial<DiaryRecord>) => {
   emit('update:record', {
@@ -28,18 +32,18 @@ const updateRecord = (updates: Partial<DiaryRecord>) => {
   })
 }
 
-const removeHeadacheLevelFromMemo = (memo: string) => {
-  return memo.replace(headacheLevelPatternGlobal, '').trimStart()
+const removeLevelFromMemo = (memo: string) => {
+  return memo.replace(levelPatternGlobal, '').trimStart()
 }
 
 const updateStatus = (status: DayStatus) => {
   updateRecord({
     status,
-    memo: status === 'headache' ? props.record.memo : removeHeadacheLevelFromMemo(props.record.memo),
+    memo: canUseSymptomLevel(status) ? props.record.memo : removeLevelFromMemo(props.record.memo),
   })
 }
 
-const applyHeadacheLevel = (level: (typeof headacheLevelOptions)[number]) => {
+const applySymptomLevel = (level: (typeof symptomLevelOptions)[number]) => {
   const levelText = `[${level}]`
   const currentMemo = props.record.memo
 
@@ -47,8 +51,8 @@ const applyHeadacheLevel = (level: (typeof headacheLevelOptions)[number]) => {
     return
   }
 
-  const nextMemo = headacheLevelPattern.test(currentMemo)
-    ? currentMemo.replace(headacheLevelPattern, levelText)
+  const nextMemo = levelPattern.test(currentMemo)
+    ? currentMemo.replace(levelPattern, levelText)
     : `${levelText}${currentMemo ? ` ${currentMemo}` : ''}`
 
   updateRecord({ memo: nextMemo })
@@ -92,14 +96,14 @@ const applyHeadacheLevel = (level: (typeof headacheLevelOptions)[number]) => {
       <span>痛み止め服用</span>
     </label>
 
-    <div v-if="record.status === 'headache'" class="headache-level">
-      <span>頭痛レベル</span>
+    <div v-if="canUseSymptomLevel(record.status)" class="headache-level">
+      <span>症状レベル</span>
       <div class="headache-level-actions">
         <button
-          v-for="level in headacheLevelOptions"
+          v-for="level in symptomLevelOptions"
           :key="level"
           type="button"
-          @click="applyHeadacheLevel(level)"
+          @click="applySymptomLevel(level)"
         >
           {{ level }}
         </button>
