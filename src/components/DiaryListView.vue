@@ -47,7 +47,9 @@ const findRecord = (dateKey: string) => {
             class="level-badge list-level-badge"
             :class="`is-${getHeadacheLevelBadge(findRecord(day.dateKey))?.tone}`"
           >
-            {{ getHeadacheLevelBadge(findRecord(day.dateKey))?.listLabel }}
+            <span class="level-badge-text">
+              {{ getHeadacheLevelBadge(findRecord(day.dateKey))?.listLabel }}
+            </span>
           </span>
         </template>
         <template v-else>未入力</template>

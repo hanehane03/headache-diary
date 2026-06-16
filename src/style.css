@@ -335,6 +335,11 @@ h1 {
   background: #c53030;
 }
 
+.level-badge-text {
+  display: inline-block;
+  transform: translateY(0.04em);
+}
+
 .list-level-badge {
   min-width: auto;
   padding-inline: 9px;
