@@ -44,7 +44,11 @@ export const getRecordIcons = (record?: DiaryRecord) => {
 }
 
 export const getHeadacheLevel = (record?: DiaryRecord): HeadacheLevel | null => {
-  const match = record?.memo.match(headacheLevelPattern)
+  if (record?.status !== 'headache') {
+    return null
+  }
+
+  const match = record.memo.match(headacheLevelPattern)
 
   return match ? (match[1] as HeadacheLevel) : null
 }

@@ -19,11 +19,23 @@ const statusOptions: Array<{ value: DayStatus; label: string }> = [
 
 const headacheLevelOptions = ['軽度', '中度', '重度'] as const
 const headacheLevelPattern = /\[(軽度|中度|重度)\]/
+const headacheLevelPatternGlobal = /\[(軽度|中度|重度)\]\s*/g
 
 const updateRecord = (updates: Partial<DiaryRecord>) => {
   emit('update:record', {
     ...props.record,
     ...updates,
+  })
+}
+
+const removeHeadacheLevelFromMemo = (memo: string) => {
+  return memo.replace(headacheLevelPatternGlobal, '').trimStart()
+}
+
+const updateStatus = (status: DayStatus) => {
+  updateRecord({
+    status,
+    memo: status === 'headache' ? props.record.memo : removeHeadacheLevelFromMemo(props.record.memo),
   })
 }
 
@@ -64,7 +76,7 @@ const applyHeadacheLevel = (level: (typeof headacheLevelOptions)[number]) => {
             type="radio"
             name="day-status"
             :checked="record.status === option.value"
-            @change="updateRecord({ status: option.value })"
+            @change="updateStatus(option.value)"
           />
           <span>{{ option.label }}</span>
         </label>
