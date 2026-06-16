@@ -7,9 +7,18 @@ const statusIconMap = {
 } as const
 
 const headacheLevelMap = {
-  軽度: '軽',
-  中度: '中',
-  重度: '重',
+  軽度: {
+    shortLabel: '軽',
+    tone: 'mild',
+  },
+  中度: {
+    shortLabel: '中',
+    tone: 'moderate',
+  },
+  重度: {
+    shortLabel: '重',
+    tone: 'severe',
+  },
 } as const
 
 type HeadacheLevel = keyof typeof headacheLevelMap
@@ -40,10 +49,10 @@ export const getHeadacheLevel = (record?: DiaryRecord): HeadacheLevel | null => 
   return match ? (match[1] as HeadacheLevel) : null
 }
 
-export const getShortHeadacheLevel = (record?: DiaryRecord) => {
+export const getHeadacheLevelBadge = (record?: DiaryRecord) => {
   const level = getHeadacheLevel(record)
 
-  return level ? headacheLevelMap[level] : ''
+  return level ? headacheLevelMap[level] : null
 }
 
 export const getListRecordLabel = (record?: DiaryRecord) => {

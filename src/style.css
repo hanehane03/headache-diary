@@ -267,15 +267,9 @@ h1 {
   background: var(--surface-muted);
 }
 
-.day-cell.is-today span {
+.day-cell.is-today .day-number {
   color: #ffffff;
   background: var(--today);
-}
-
-.day-cell.is-today .day-markers,
-.day-cell.is-today .day-markers span {
-  color: inherit;
-  background: transparent;
 }
 
 .day-cell.is-selected {
@@ -313,15 +307,30 @@ h1 {
   display: inline-block;
 }
 
-.day-level {
-  min-width: 1.15rem;
+.level-badge {
+  display: inline-flex;
+  min-width: 1.45rem;
+  min-height: 1.25rem;
+  align-items: center;
+  justify-content: center;
   border-radius: 999px;
-  background: var(--primary-strong);
   color: #ffffff;
-  padding: 2px 4px;
-  font-size: 0.68rem;
+  padding: 2px 7px;
+  font-size: 0.72rem;
   font-weight: 700;
   line-height: 1;
+}
+
+.level-badge.is-mild {
+  background: #2f855a;
+}
+
+.level-badge.is-moderate {
+  background: #b7791f;
+}
+
+.level-badge.is-severe {
+  background: #c53030;
 }
 
 .diary-list {
@@ -359,6 +368,9 @@ h1 {
 }
 
 .diary-list-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   justify-self: end;
   font-size: 1.08rem;
   font-weight: 700;
@@ -608,6 +620,13 @@ h1 {
 
   .day-markers {
     font-size: 0.95rem;
+  }
+
+  .level-badge {
+    min-width: 1.35rem;
+    min-height: 1.15rem;
+    padding-inline: 6px;
+    font-size: 0.68rem;
   }
 
   .diary-form {

@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import type { DiaryRecord } from '../types/diary'
 import { buildCurrentMonthDays, formatListDateLabel } from '../utils/date'
-import { getListRecordLabel } from '../utils/recordDisplay'
+import { getHeadacheLevelBadge, getListRecordLabel, getRecordIcons } from '../utils/recordDisplay'
 
 const props = defineProps<{
   year: number
@@ -40,7 +40,17 @@ const findRecord = (dateKey: string) => {
         class="diary-list-status"
         :class="{ 'is-empty': getListRecordLabel(findRecord(day.dateKey)) === '未入力' }"
       >
-        {{ getListRecordLabel(findRecord(day.dateKey)) }}
+        <template v-if="getListRecordLabel(findRecord(day.dateKey)) !== '未入力'">
+          <span>{{ getRecordIcons(findRecord(day.dateKey)).join('') }}</span>
+          <span
+            v-if="getHeadacheLevelBadge(findRecord(day.dateKey))"
+            class="level-badge"
+            :class="`is-${getHeadacheLevelBadge(findRecord(day.dateKey))?.tone}`"
+          >
+            {{ getHeadacheLevelBadge(findRecord(day.dateKey))?.shortLabel }}
+          </span>
+        </template>
+        <template v-else>未入力</template>
       </span>
     </button>
   </div>

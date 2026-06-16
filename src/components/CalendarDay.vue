@@ -2,7 +2,7 @@
 import type { CalendarDay } from '../utils/date'
 import type { DiaryRecord } from '../types/diary'
 import { isToday } from '../utils/date'
-import { getRecordIcons, getShortHeadacheLevel, hasRecordContent } from '../utils/recordDisplay'
+import { getHeadacheLevelBadge, getRecordIcons, hasRecordContent } from '../utils/recordDisplay'
 
 defineProps<{
   day: CalendarDay
@@ -30,8 +30,12 @@ const emit = defineEmits<{
     <span class="day-number">{{ day.date.getDate() }}</span>
     <span v-if="getRecordIcons(record).length > 0" class="day-markers" aria-label="記録あり">
       <span v-for="icon in getRecordIcons(record)" :key="icon">{{ icon }}</span>
-      <span v-if="getShortHeadacheLevel(record)" class="day-level">
-        {{ getShortHeadacheLevel(record) }}
+      <span
+        v-if="getHeadacheLevelBadge(record)"
+        class="level-badge"
+        :class="`is-${getHeadacheLevelBadge(record)?.tone}`"
+      >
+        {{ getHeadacheLevelBadge(record)?.shortLabel }}
       </span>
     </span>
   </button>
