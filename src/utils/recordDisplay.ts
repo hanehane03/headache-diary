@@ -9,14 +9,17 @@ const statusIconMap = {
 const levelMap = {
   '1': {
     shortLabel: '1',
+    listLabel: '頭痛度1',
     tone: 'mild',
   },
   '2': {
     shortLabel: '2',
+    listLabel: '頭痛度2',
     tone: 'moderate',
   },
   '3': {
     shortLabel: '3',
+    listLabel: '頭痛度3',
     tone: 'severe',
   },
 } as const
@@ -25,12 +28,15 @@ const legacyLevelMap = {
   軽度: '1',
   中度: '2',
   重度: '3',
+  頭痛度1: '1',
+  頭痛度2: '2',
+  頭痛度3: '3',
 } as const
 
 type Level = keyof typeof levelMap
 type LegacyLevel = keyof typeof legacyLevelMap
 
-const levelPattern = /\[(1|2|3|軽度|中度|重度)\]/
+const levelPattern = /\[(1|2|3|軽度|中度|重度|頭痛度1|頭痛度2|頭痛度3)\]/
 
 const canShowLevel = (record?: DiaryRecord) => {
   return record?.status === 'headache' || record?.status === 'notRefreshing'
@@ -81,10 +87,11 @@ export const getHeadacheLevelBadge = (record?: DiaryRecord) => {
 export const getListRecordLabel = (record?: DiaryRecord) => {
   const icons = getRecordIcons(record).join('')
   const level = getSymptomLevel(record)
+  const levelLabel = level ? levelMap[level].listLabel : ''
 
-  if (!icons && !level) {
+  if (!icons && !levelLabel) {
     return '未入力'
   }
 
-  return [icons, level ? `[${level}]` : ''].filter(Boolean).join(' ')
+  return [icons, levelLabel].filter(Boolean).join(' ')
 }

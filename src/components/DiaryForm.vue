@@ -17,9 +17,13 @@ const statusOptions: Array<{ value: DayStatus; label: string }> = [
   { value: 'refreshing', label: 'スッキリしていた' },
 ]
 
-const symptomLevelOptions = ['1', '2', '3'] as const
-const levelPattern = /\[(1|2|3|軽度|中度|重度)\]/
-const levelPatternGlobal = /\[(1|2|3|軽度|中度|重度)\]\s*/g
+const symptomLevelOptions = [
+  { value: '1', label: '頭痛度1' },
+  { value: '2', label: '頭痛度2' },
+  { value: '3', label: '頭痛度3' },
+] as const
+const levelPattern = /\[(1|2|3|軽度|中度|重度|頭痛度1|頭痛度2|頭痛度3)\]/
+const levelPatternGlobal = /\[(1|2|3|軽度|中度|重度|頭痛度1|頭痛度2|頭痛度3)\]\s*/g
 
 const canUseSymptomLevel = (status: DayStatus) => {
   return status === 'headache' || status === 'notRefreshing'
@@ -44,7 +48,7 @@ const updateStatus = (status: DayStatus) => {
 }
 
 const applySymptomLevel = (level: (typeof symptomLevelOptions)[number]) => {
-  const levelText = `[${level}]`
+  const levelText = `[${level.label}]`
   const currentMemo = props.record.memo
 
   if (currentMemo.includes(levelText)) {
@@ -97,15 +101,15 @@ const applySymptomLevel = (level: (typeof symptomLevelOptions)[number]) => {
     </label>
 
     <div v-if="canUseSymptomLevel(record.status)" class="headache-level">
-      <span>症状レベル</span>
+      <span>頭痛度</span>
       <div class="headache-level-actions">
         <button
           v-for="level in symptomLevelOptions"
-          :key="level"
+          :key="level.value"
           type="button"
           @click="applySymptomLevel(level)"
         >
-          {{ level }}
+          {{ level.label }}
         </button>
       </div>
     </div>

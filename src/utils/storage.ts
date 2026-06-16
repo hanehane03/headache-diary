@@ -4,9 +4,12 @@ const STORAGE_KEY = 'headache-diary-records'
 const BACKUP_VERSION = 1
 const dayStatuses: DayStatus[] = ['headache', 'notRefreshing', 'refreshing', null]
 const legacyLevelReplacements: Array<[RegExp, string]> = [
-  [/\[軽度\]/g, '[1]'],
-  [/\[中度\]/g, '[2]'],
-  [/\[重度\]/g, '[3]'],
+  [/\[軽度\]/g, '[頭痛度1]'],
+  [/\[中度\]/g, '[頭痛度2]'],
+  [/\[重度\]/g, '[頭痛度3]'],
+  [/\[1\]/g, '[頭痛度1]'],
+  [/\[2\]/g, '[頭痛度2]'],
+  [/\[3\]/g, '[頭痛度3]'],
 ]
 
 export interface DiaryBackup {

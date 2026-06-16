@@ -44,10 +44,10 @@ const findRecord = (dateKey: string) => {
           <span>{{ getRecordIcons(findRecord(day.dateKey)).join('') }}</span>
           <span
             v-if="getHeadacheLevelBadge(findRecord(day.dateKey))"
-            class="level-badge"
+            class="level-badge list-level-badge"
             :class="`is-${getHeadacheLevelBadge(findRecord(day.dateKey))?.tone}`"
           >
-            {{ getHeadacheLevelBadge(findRecord(day.dateKey))?.shortLabel }}
+            {{ getHeadacheLevelBadge(findRecord(day.dateKey))?.listLabel }}
           </span>
         </template>
         <template v-else>未入力</template>

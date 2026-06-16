@@ -298,8 +298,9 @@ h1 {
   min-height: 1.35rem;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  font-size: clamp(1.02rem, 4.2vw, 1.22rem);
+  flex-wrap: wrap;
+  gap: 2px 3px;
+  font-size: clamp(0.98rem, 3.7vw, 1.12rem);
   line-height: 1;
 }
 
@@ -309,16 +310,17 @@ h1 {
 
 .level-badge {
   display: inline-flex;
-  min-width: 1.45rem;
-  min-height: 1.25rem;
+  min-width: 0;
+  min-height: 1.08rem;
   align-items: center;
   justify-content: center;
   border-radius: 999px;
   color: #ffffff;
-  padding: 2px 7px;
-  font-size: 0.72rem;
+  padding: 2px 5px;
+  font-size: 0.58rem;
   font-weight: 700;
   line-height: 1;
+  white-space: nowrap;
 }
 
 .level-badge.is-mild {
@@ -331,6 +333,12 @@ h1 {
 
 .level-badge.is-severe {
   background: #c53030;
+}
+
+.list-level-badge {
+  min-width: auto;
+  padding-inline: 9px;
+  font-size: 0.72rem;
 }
 
 .diary-list {
@@ -619,14 +627,13 @@ h1 {
   }
 
   .day-markers {
-    font-size: 0.95rem;
+    font-size: 0.88rem;
   }
 
   .level-badge {
-    min-width: 1.35rem;
-    min-height: 1.15rem;
-    padding-inline: 6px;
-    font-size: 0.68rem;
+    min-height: 1rem;
+    padding-inline: 4px;
+    font-size: 0.52rem;
   }
 
   .diary-form {
