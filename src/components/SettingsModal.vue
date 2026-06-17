@@ -3,12 +3,15 @@ import BackupRestore from './BackupRestore.vue'
 import type { DiaryRecord } from '../types/diary'
 
 defineProps<{
+  pressureFeatureAvailable: boolean
+  pressureEnabled: boolean
   records: DiaryRecord[]
 }>()
 
 const emit = defineEmits<{
   close: []
   restore: [records: DiaryRecord[]]
+  'update:pressureEnabled': [enabled: boolean]
 }>()
 </script>
 
@@ -21,6 +24,19 @@ const emit = defineEmits<{
       </header>
 
       <BackupRestore :records="records" @restore="emit('restore', $event)" />
+
+      <div v-if="pressureFeatureAvailable" class="settings-divider" role="presentation"></div>
+
+      <label v-if="pressureFeatureAvailable" class="experimental-setting">
+        <input
+          type="checkbox"
+          :checked="pressureEnabled"
+          @change="
+            emit('update:pressureEnabled', ($event.target as HTMLInputElement).checked)
+          "
+        />
+        <span>気圧表示（実験機能）</span>
+      </label>
     </section>
   </div>
 </template>

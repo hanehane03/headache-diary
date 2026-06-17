@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { FEATURES } from './config/features'
 import CalendarMonth from './components/CalendarMonth.vue'
 import DiaryForm from './components/DiaryForm.vue'
 import DiaryListView from './components/DiaryListView.vue'
@@ -7,6 +8,7 @@ import PeriodSummary from './components/PeriodSummary.vue'
 import SettingsModal from './components/SettingsModal.vue'
 import type { DiaryRecord } from './types/diary'
 import { summarizePeriod } from './utils/summary'
+import { loadAppSettings, saveAppSettings } from './utils/settings'
 import { loadDiaryRecords, saveDiaryRecords } from './utils/storage'
 import { formatDateLabel, formatMonthLabel, toDateKey } from './utils/date'
 
@@ -15,12 +17,14 @@ type DisplayMode = 'calendar' | 'list'
 const today = new Date()
 const initialStartDate = new Date(today)
 initialStartDate.setDate(today.getDate() - 28)
+const initialSettings = loadAppSettings()
 
 const currentYear = ref(today.getFullYear())
 const currentMonth = ref(today.getMonth())
 const selectedDate = ref(toDateKey(today))
 const displayMode = ref<DisplayMode>('calendar')
 const isSettingsOpen = ref(false)
+const pressureEnabled = ref(initialSettings.pressureEnabled)
 const summaryStartDate = ref(toDateKey(initialStartDate))
 const summaryEndDate = ref(toDateKey(today))
 const records = ref<DiaryRecord[]>(loadDiaryRecords())
@@ -30,6 +34,7 @@ const selectedDateLabel = computed(() => formatDateLabel(selectedDate.value))
 const periodSummary = computed(() =>
   summarizePeriod(records.value, summaryStartDate.value, summaryEndDate.value),
 )
+const canShowPressure = computed(() => FEATURES.pressure && pressureEnabled.value)
 
 const selectedRecord = computed<DiaryRecord>(() => {
   const record = records.value.find((item) => item.date === selectedDate.value)
@@ -74,6 +79,13 @@ const updateRecord = (record: DiaryRecord) => {
 const restoreRecords = (restoredRecords: DiaryRecord[]) => {
   records.value = restoredRecords
   saveDiaryRecords(restoredRecords)
+}
+
+const updatePressureEnabled = (enabled: boolean) => {
+  pressureEnabled.value = enabled
+  saveAppSettings({
+    pressureEnabled: enabled,
+  })
 }
 </script>
 
@@ -149,15 +161,19 @@ const restoreRecords = (restoredRecords: DiaryRecord[]) => {
       class="diary-section"
       :date="selectedDate"
       :date-label="selectedDateLabel"
+      :pressure-enabled="canShowPressure"
       :record="selectedRecord"
       @update:record="updateRecord"
     />
 
     <SettingsModal
       v-if="isSettingsOpen"
+      :pressure-feature-available="FEATURES.pressure"
+      :pressure-enabled="pressureEnabled"
       :records="records"
       @close="isSettingsOpen = false"
       @restore="restoreRecords"
+      @update:pressure-enabled="updatePressureEnabled"
     />
   </main>
 </template>
