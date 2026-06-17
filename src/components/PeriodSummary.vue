@@ -1,29 +1,33 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import type { PeriodSummary } from "../utils/summary";
-import { formatDateLabel } from "../utils/date";
+import { computed } from 'vue'
+import type { PeriodSummary } from '../utils/summary'
+import { formatDateLabel, shiftDateKey } from '../utils/date'
 
 const props = defineProps<{
-  summary: PeriodSummary;
-  startDate: string;
-  endDate: string;
-}>();
+  summary: PeriodSummary
+  startDate: string
+  endDate: string
+}>()
 
 const emit = defineEmits<{
-  "update:startDate": [date: string];
-  "update:endDate": [date: string];
-}>();
+  'update:startDate': [date: string]
+  'update:endDate': [date: string]
+}>()
 
 const periodLabel = computed(() => {
-  return `${formatDateLabel(props.startDate)} ～ ${formatDateLabel(props.endDate)}`;
-});
+  return `${formatDateLabel(props.startDate)} ～ ${formatDateLabel(props.endDate)}`
+})
+
+const setPastFourWeeks = () => {
+  emit('update:startDate', shiftDateKey(props.endDate, -28))
+}
 
 const summaryItems: Array<{ key: keyof PeriodSummary; label: string }> = [
-  { key: "headacheDays", label: "頭痛があった日数" },
-  { key: "medicineDays", label: "痛み止めを服用した日数" },
-  { key: "notRefreshingDays", label: "頭が重かった日数" },
-  { key: "refreshingDays", label: "スッキリしていた日数" },
-];
+  { key: 'headacheDays', label: '頭痛があった日数' },
+  { key: 'medicineDays', label: '痛み止めを服用した日数' },
+  { key: 'notRefreshingDays', label: 'スッキリしなかった日数' },
+  { key: 'refreshingDays', label: 'スッキリしていた日数' },
+]
 </script>
 
 <template>
@@ -37,12 +41,7 @@ const summaryItems: Array<{ key: keyof PeriodSummary; label: string }> = [
           <input
             type="date"
             :value="startDate"
-            @input="
-              emit(
-                'update:startDate',
-                ($event.target as HTMLInputElement).value,
-              )
-            "
+            @input="emit('update:startDate', ($event.target as HTMLInputElement).value)"
           />
         </label>
 
@@ -51,20 +50,18 @@ const summaryItems: Array<{ key: keyof PeriodSummary; label: string }> = [
           <input
             type="date"
             :value="endDate"
-            @input="
-              emit('update:endDate', ($event.target as HTMLInputElement).value)
-            "
+            @input="emit('update:endDate', ($event.target as HTMLInputElement).value)"
           />
         </label>
       </div>
+
+      <button class="period-quick-button" type="button" @click="setPastFourWeeks">
+        過去4週間
+      </button>
     </div>
 
     <div class="summary-cards">
-      <article
-        v-for="item in summaryItems"
-        :key="item.key"
-        class="summary-card"
-      >
+      <article v-for="item in summaryItems" :key="item.key" class="summary-card">
         <span>{{ item.label }}</span>
         <strong>{{ summary[item.key] }}</strong>
       </article>

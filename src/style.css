@@ -173,6 +173,17 @@ h1 {
   font: inherit;
 }
 
+.period-quick-button {
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--primary-strong);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .summary-cards {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -310,14 +321,14 @@ h1 {
 
 .level-badge {
   display: inline-flex;
-  min-width: 0;
+  min-width: 1.2rem;
   min-height: 1.08rem;
   align-items: center;
   justify-content: center;
   border-radius: 999px;
   color: #ffffff;
   padding: 2px 5px;
-  font-size: 0.58rem;
+  font-size: 0.62rem;
   font-weight: 700;
   line-height: 1;
   white-space: nowrap;
@@ -587,7 +598,8 @@ h1 {
 .medicine-option:focus-within,
 .headache-level-actions button:focus-visible,
 .memo-field textarea:focus-visible,
-.period-inputs input:focus-visible {
+.period-inputs input:focus-visible,
+.period-quick-button:focus-visible {
   outline: 3px solid rgba(62, 111, 103, 0.34);
   outline-offset: 2px;
 }
@@ -637,8 +649,9 @@ h1 {
 
   .level-badge {
     min-height: 1rem;
+    min-width: 1.08rem;
     padding-inline: 4px;
-    font-size: 0.52rem;
+    font-size: 0.58rem;
   }
 
   .diary-form {

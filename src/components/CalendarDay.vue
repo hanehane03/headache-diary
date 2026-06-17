@@ -35,7 +35,7 @@ const emit = defineEmits<{
         class="level-badge"
         :class="`is-${getHeadacheLevelBadge(record)?.tone}`"
       >
-        <span class="level-badge-text">{{ getHeadacheLevelBadge(record)?.listLabel }}</span>
+        <span class="level-badge-text">{{ getHeadacheLevelBadge(record)?.shortLabel }}</span>
       </span>
     </span>
   </button>
