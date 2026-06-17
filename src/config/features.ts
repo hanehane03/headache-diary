@@ -1,3 +1,3 @@
 export const FEATURES = {
-  pressure: false,
+  pressure: true,
 } as const;

@@ -653,25 +653,61 @@ h1 {
   accent-color: var(--primary);
 }
 
-.pressure-location-setting {
+.current-location-setting {
   display: grid;
-  gap: 6px;
+  gap: 10px;
 }
 
-.pressure-location-setting span {
+.current-location-setting h3 {
+  margin: 0;
   color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.current-location-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  padding: 12px;
+}
+
+.current-location-empty,
+.current-location-values p {
+  margin: 0;
+}
+
+.current-location-values {
+  display: grid;
+  gap: 4px;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.location-error {
+  margin: 0;
+  color: #b42318;
   font-size: 0.9rem;
   font-weight: 700;
 }
 
-.pressure-location-setting select {
-  min-height: 44px;
+.location-button {
+  min-height: 48px;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: #ffffff;
-  color: var(--text);
+  color: var(--primary-strong);
   font: inherit;
-  padding: 0 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.location-button:disabled {
+  color: var(--text-muted);
+  cursor: wait;
+  opacity: 0.75;
 }
 
 .backup-panel {
@@ -716,7 +752,7 @@ h1 {
 .settings-button:focus-visible,
 .settings-modal-header button:focus-visible,
 .experimental-setting:focus-within,
-.pressure-location-setting select:focus-visible,
+.location-button:focus-visible,
 .view-switch button:focus-visible,
 .diary-list-row:focus-visible,
 .backup-actions button:focus-visible,

@@ -7,9 +7,8 @@ import DiaryListView from './components/DiaryListView.vue'
 import PeriodSummary from './components/PeriodSummary.vue'
 import SettingsModal from './components/SettingsModal.vue'
 import type { DiaryRecord } from './types/diary'
-import type { PressureLocationId } from './utils/pressure'
 import { summarizePeriod } from './utils/summary'
-import { loadAppSettings, saveAppSettings } from './utils/settings'
+import { loadAppSettings, saveAppSettings, type PressureCurrentLocation } from './utils/settings'
 import { loadDiaryRecords, saveDiaryRecords } from './utils/storage'
 import { formatDateLabel, formatMonthLabel, toDateKey } from './utils/date'
 
@@ -26,7 +25,9 @@ const selectedDate = ref(toDateKey(today))
 const displayMode = ref<DisplayMode>('calendar')
 const isSettingsOpen = ref(false)
 const pressureEnabled = ref(initialSettings.pressureEnabled)
-const pressureLocation = ref<PressureLocationId>(initialSettings.pressureLocation)
+const pressureCurrentLocation = ref<PressureCurrentLocation | null>(
+  initialSettings.pressureCurrentLocation,
+)
 const summaryStartDate = ref(toDateKey(initialStartDate))
 const summaryEndDate = ref(toDateKey(today))
 const records = ref<DiaryRecord[]>(loadDiaryRecords())
@@ -54,7 +55,7 @@ const selectedRecord = computed<DiaryRecord>(() => {
 const saveSettings = () => {
   saveAppSettings({
     pressureEnabled: pressureEnabled.value,
-    pressureLocation: pressureLocation.value,
+    pressureCurrentLocation: pressureCurrentLocation.value,
   })
 }
 
@@ -95,8 +96,8 @@ const updatePressureEnabled = (enabled: boolean) => {
   saveSettings()
 }
 
-const updatePressureLocation = (location: PressureLocationId) => {
-  pressureLocation.value = location
+const updatePressureCurrentLocation = (location: PressureCurrentLocation) => {
+  pressureCurrentLocation.value = location
   saveSettings()
 }
 </script>
@@ -163,8 +164,8 @@ const updatePressureLocation = (location: PressureLocationId) => {
       <DiaryListView
         v-else
         v-model:selected-date="selectedDate"
+        :pressure-coordinates="pressureCurrentLocation"
         :pressure-enabled="canShowPressure"
-        :pressure-location="pressureLocation"
         :records="records"
         :year="currentYear"
         :month="currentMonth"
@@ -175,22 +176,22 @@ const updatePressureLocation = (location: PressureLocationId) => {
       class="diary-section"
       :date="selectedDate"
       :date-label="selectedDateLabel"
+      :pressure-coordinates="pressureCurrentLocation"
       :pressure-enabled="canShowPressure"
-      :pressure-location="pressureLocation"
       :record="selectedRecord"
       @update:record="updateRecord"
     />
 
     <SettingsModal
       v-if="isSettingsOpen"
+      :pressure-current-location="pressureCurrentLocation"
       :pressure-feature-available="FEATURES.pressure"
       :pressure-enabled="pressureEnabled"
-      :pressure-location="pressureLocation"
       :records="records"
       @close="isSettingsOpen = false"
       @restore="restoreRecords"
+      @update:pressure-current-location="updatePressureCurrentLocation"
       @update:pressure-enabled="updatePressureEnabled"
-      @update:pressure-location="updatePressureLocation"
     />
   </main>
 </template>

@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import PressureValue from './PressureValue.vue'
 import type { DiaryRecord } from '../types/diary'
-import type { PressureLocationId } from '../utils/pressure'
+import type { PressureCoordinates } from '../utils/pressure'
 import { buildCurrentMonthDays, formatListDateLabel } from '../utils/date'
 import { getHeadacheLevelBadge, getListRecordLabel, getRecordIcons } from '../utils/recordDisplay'
 
@@ -10,8 +10,8 @@ const props = defineProps<{
   year: number
   month: number
   selectedDate: string
+  pressureCoordinates: PressureCoordinates | null
   pressureEnabled: boolean
-  pressureLocation: PressureLocationId
   records: DiaryRecord[]
 }>()
 
@@ -61,8 +61,8 @@ const findRecord = (dateKey: string) => {
         </span>
         <PressureValue
           v-if="pressureEnabled"
+          :coordinates="pressureCoordinates"
           :date="day.dateKey"
-          :location="pressureLocation"
         />
       </span>
     </button>

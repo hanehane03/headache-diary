@@ -1,32 +1,7 @@
-export const PRESSURE_LOCATIONS = {
-  ichikawa: {
-    name: '市川市',
-    lat: 35.72,
-    lon: 139.92,
-  },
-  tokyo23: {
-    name: '東京23区',
-    lat: 35.68,
-    lon: 139.76,
-  },
-  yokohama: {
-    name: '横浜市',
-    lat: 35.44,
-    lon: 139.64,
-  },
-  saitama: {
-    name: 'さいたま市',
-    lat: 35.86,
-    lon: 139.65,
-  },
-  chiba: {
-    name: '千葉市',
-    lat: 35.61,
-    lon: 140.11,
-  },
-} as const
-
-export type PressureLocationId = keyof typeof PRESSURE_LOCATIONS
+export interface PressureCoordinates {
+  lat: number
+  lon: number
+}
 
 interface OpenMeteoPressureResponse {
   hourly?: {
@@ -34,15 +9,20 @@ interface OpenMeteoPressureResponse {
   }
 }
 
-export const isPressureLocationId = (value: unknown): value is PressureLocationId => {
-  return typeof value === 'string' && value in PRESSURE_LOCATIONS
+export const isPressureCoordinates = (value: unknown): value is PressureCoordinates => {
+  if (!value || typeof value !== 'object') {
+    return false
+  }
+
+  const coordinates = value as Record<string, unknown>
+
+  return typeof coordinates.lat === 'number' && typeof coordinates.lon === 'number'
 }
 
-export const fetchSurfacePressure = async (dateKey: string, locationId: PressureLocationId) => {
-  const location = PRESSURE_LOCATIONS[locationId]
+export const fetchSurfacePressure = async (dateKey: string, coordinates: PressureCoordinates) => {
   const params = new URLSearchParams({
-    latitude: String(location.lat),
-    longitude: String(location.lon),
+    latitude: String(coordinates.lat),
+    longitude: String(coordinates.lon),
     hourly: 'surface_pressure',
     start_date: dateKey,
     end_date: dateKey,

@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import BackupRestore from './BackupRestore.vue'
 import type { DiaryRecord } from '../types/diary'
-import type { PressureLocationId } from '../utils/pressure'
-import { PRESSURE_LOCATIONS } from '../utils/pressure'
+import type { PressureCurrentLocation } from '../utils/settings'
 
 defineProps<{
   pressureFeatureAvailable: boolean
   pressureEnabled: boolean
-  pressureLocation: PressureLocationId
+  pressureCurrentLocation: PressureCurrentLocation | null
   records: DiaryRecord[]
 }>()
 
@@ -15,13 +15,58 @@ const emit = defineEmits<{
   close: []
   restore: [records: DiaryRecord[]]
   'update:pressureEnabled': [enabled: boolean]
-  'update:pressureLocation': [location: PressureLocationId]
+  'update:pressureCurrentLocation': [location: PressureCurrentLocation]
 }>()
 
-const pressureLocationOptions = Object.entries(PRESSURE_LOCATIONS).map(([id, location]) => ({
-  id: id as PressureLocationId,
-  name: location.name,
-}))
+const isLocating = ref(false)
+const locationError = ref('')
+
+const formatCoordinate = (value: number) => value.toFixed(3)
+
+const formatUpdatedAt = (value: string) => {
+  const date = new Date(value)
+
+  if (Number.isNaN(date.getTime())) {
+    return value
+  }
+
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+
+  return `${year}/${month}/${day} ${hours}:${minutes}`
+}
+
+const requestCurrentLocation = () => {
+  locationError.value = ''
+
+  if (!navigator.geolocation) {
+    locationError.value = '位置情報を取得できませんでした'
+    return
+  }
+
+  isLocating.value = true
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      isLocating.value = false
+      emit('update:pressureCurrentLocation', {
+        lat: Number(position.coords.latitude.toFixed(3)),
+        lon: Number(position.coords.longitude.toFixed(3)),
+        updatedAt: new Date().toISOString(),
+      })
+    },
+    (error) => {
+      isLocating.value = false
+      locationError.value =
+        error.code === error.PERMISSION_DENIED
+          ? '位置情報の取得が許可されませんでした'
+          : '位置情報を取得できませんでした'
+    },
+  )
+}
 </script>
 
 <template>
@@ -48,22 +93,29 @@ const pressureLocationOptions = Object.entries(PRESSURE_LOCATIONS).map(([id, loc
           <span>気圧表示（実験機能）</span>
         </label>
 
-        <label class="pressure-location-setting">
-          <span>地域</span>
-          <select
-            :value="pressureLocation"
-            @change="
-              emit(
-                'update:pressureLocation',
-                ($event.target as HTMLSelectElement).value as PressureLocationId,
-              )
-            "
+        <section class="current-location-setting" aria-labelledby="current-location-title">
+          <h3 id="current-location-title">現在地</h3>
+
+          <div class="current-location-card">
+            <p v-if="!pressureCurrentLocation" class="current-location-empty">未設定</p>
+            <div v-else class="current-location-values">
+              <p>緯度: {{ formatCoordinate(pressureCurrentLocation.lat) }}</p>
+              <p>経度: {{ formatCoordinate(pressureCurrentLocation.lon) }}</p>
+              <p>最終取得: {{ formatUpdatedAt(pressureCurrentLocation.updatedAt) }}</p>
+            </div>
+          </div>
+
+          <p v-if="locationError" class="location-error">{{ locationError }}</p>
+
+          <button
+            type="button"
+            class="location-button"
+            :disabled="isLocating"
+            @click="requestCurrentLocation"
           >
-            <option v-for="location in pressureLocationOptions" :key="location.id" :value="location.id">
-              {{ location.name }}
-            </option>
-          </select>
-        </label>
+            {{ isLocating ? '取得中...' : '現在地を取得' }}
+          </button>
+        </section>
       </template>
     </section>
   </div>

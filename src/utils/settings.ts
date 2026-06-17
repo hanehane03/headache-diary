@@ -1,35 +1,40 @@
-import type { PressureLocationId } from './pressure'
-import { isPressureLocationId } from './pressure'
+import { isPressureCoordinates, type PressureCoordinates } from './pressure'
 
 const SETTINGS_KEY = 'headache-diary-settings'
 
+export interface PressureCurrentLocation extends PressureCoordinates {
+  updatedAt: string
+}
+
 export interface AppSettings {
   pressureEnabled: boolean
-  pressureLocation: PressureLocationId
+  pressureCurrentLocation: PressureCurrentLocation | null
 }
 
 const defaultSettings: AppSettings = {
   pressureEnabled: false,
-  pressureLocation: 'ichikawa',
+  pressureCurrentLocation: null,
 }
 
-const isAppSettings = (value: unknown): value is AppSettings => {
-  if (!value || typeof value !== 'object') {
+const isPressureCurrentLocation = (value: unknown): value is PressureCurrentLocation => {
+  if (!isPressureCoordinates(value)) {
     return false
   }
 
-  const settings = value as Record<string, unknown>
+  const location = value as unknown as Record<string, unknown>
 
-  return (
-    typeof settings.pressureEnabled === 'boolean' &&
-    (settings.pressureLocation === undefined || isPressureLocationId(settings.pressureLocation))
-  )
+  return typeof location.updatedAt === 'string'
 }
 
-const normalizeSettings = (settings: AppSettings | { pressureEnabled: boolean }) => {
+const normalizeSettings = (settings: Record<string, unknown>): AppSettings => {
   return {
-    ...defaultSettings,
-    ...settings,
+    pressureEnabled:
+      typeof settings.pressureEnabled === 'boolean'
+        ? settings.pressureEnabled
+        : defaultSettings.pressureEnabled,
+    pressureCurrentLocation: isPressureCurrentLocation(settings.pressureCurrentLocation)
+      ? settings.pressureCurrentLocation
+      : null,
   }
 }
 
@@ -43,7 +48,9 @@ export const loadAppSettings = (): AppSettings => {
   try {
     const parsedSettings: unknown = JSON.parse(storedSettings)
 
-    return isAppSettings(parsedSettings) ? normalizeSettings(parsedSettings) : defaultSettings
+    return parsedSettings && typeof parsedSettings === 'object'
+      ? normalizeSettings(parsedSettings as Record<string, unknown>)
+      : defaultSettings
   } catch {
     return defaultSettings
   }
