@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import BackupRestore from './components/BackupRestore.vue'
 import CalendarMonth from './components/CalendarMonth.vue'
 import DiaryForm from './components/DiaryForm.vue'
 import DiaryListView from './components/DiaryListView.vue'
 import PeriodSummary from './components/PeriodSummary.vue'
+import SettingsModal from './components/SettingsModal.vue'
 import type { DiaryRecord } from './types/diary'
 import { summarizePeriod } from './utils/summary'
 import { loadDiaryRecords, saveDiaryRecords } from './utils/storage'
@@ -20,6 +20,7 @@ const currentYear = ref(today.getFullYear())
 const currentMonth = ref(today.getMonth())
 const selectedDate = ref(toDateKey(today))
 const displayMode = ref<DisplayMode>('calendar')
+const isSettingsOpen = ref(false)
 const summaryStartDate = ref(toDateKey(initialStartDate))
 const summaryEndDate = ref(toDateKey(today))
 const records = ref<DiaryRecord[]>(loadDiaryRecords())
@@ -84,7 +85,17 @@ const restoreRecords = (restoredRecords: DiaryRecord[]) => {
         <h1>{{ monthLabel }}</h1>
       </div>
 
-      <button class="today-button" type="button" @click="moveToToday">今日</button>
+      <div class="header-actions">
+        <button class="today-button" type="button" @click="moveToToday">今日</button>
+        <button
+          class="settings-button"
+          type="button"
+          aria-label="設定を開く"
+          @click="isSettingsOpen = true"
+        >
+          ⚙️
+        </button>
+      </div>
     </header>
 
     <div class="view-switch" aria-label="表示切替">
@@ -142,6 +153,11 @@ const restoreRecords = (restoredRecords: DiaryRecord[]) => {
       @update:record="updateRecord"
     />
 
-    <BackupRestore class="settings-section" :records="records" @restore="restoreRecords" />
+    <SettingsModal
+      v-if="isSettingsOpen"
+      :records="records"
+      @close="isSettingsOpen = false"
+      @restore="restoreRecords"
+    />
   </main>
 </template>

@@ -47,7 +47,7 @@ const restoreRecords = async (event: Event) => {
 <template>
   <section class="backup-panel" aria-label="バックアップと復元">
     <div class="backup-panel-header">
-      <h2>設定</h2>
+      <h3>バックアップと復元</h3>
     </div>
 
     <div class="backup-actions">

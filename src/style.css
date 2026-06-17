@@ -59,6 +59,12 @@ button {
   margin-bottom: 18px;
 }
 
+.header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
 .app-kicker {
   margin: 0 0 4px;
   color: var(--text-muted);
@@ -85,6 +91,17 @@ h1 {
 .today-button {
   color: var(--primary-strong);
   font-weight: 700;
+}
+
+.settings-button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  cursor: pointer;
 }
 
 .view-switch {
@@ -216,10 +233,6 @@ h1 {
 }
 
 .diary-section {
-  margin-top: 14px;
-}
-
-.settings-section {
   margin-top: 14px;
 }
 
@@ -558,6 +571,54 @@ h1 {
   line-height: 1.5;
 }
 
+.settings-modal-backdrop {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(47, 48, 44, 0.42);
+  padding: 16px;
+}
+
+.settings-modal {
+  display: grid;
+  gap: 14px;
+  width: min(100%, 520px);
+  max-height: calc(100svh - 32px);
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+.settings-modal-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.settings-modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.settings-modal-header button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
 .backup-panel {
   display: grid;
   gap: 12px;
@@ -568,7 +629,7 @@ h1 {
   box-shadow: var(--shadow);
 }
 
-.backup-panel-header h2 {
+.backup-panel-header h3 {
   margin: 0;
   font-size: 1.15rem;
   line-height: 1.2;
@@ -597,6 +658,8 @@ h1 {
 
 .day-cell:focus-visible,
 .today-button:focus-visible,
+.settings-button:focus-visible,
+.settings-modal-header button:focus-visible,
 .view-switch button:focus-visible,
 .diary-list-row:focus-visible,
 .backup-actions button:focus-visible,
