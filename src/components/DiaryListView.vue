@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import PressureValue from './PressureValue.vue'
 import type { DiaryRecord } from '../types/diary'
+import type { PressureLocationId } from '../utils/pressure'
 import { buildCurrentMonthDays, formatListDateLabel } from '../utils/date'
 import { getHeadacheLevelBadge, getListRecordLabel, getRecordIcons } from '../utils/recordDisplay'
 
@@ -8,6 +10,8 @@ const props = defineProps<{
   year: number
   month: number
   selectedDate: string
+  pressureEnabled: boolean
+  pressureLocation: PressureLocationId
   records: DiaryRecord[]
 }>()
 
@@ -36,23 +40,30 @@ const findRecord = (dateKey: string) => {
       @click="emit('update:selectedDate', day.dateKey)"
     >
       <span class="diary-list-date">{{ formatListDateLabel(day.date) }}</span>
-      <span
-        class="diary-list-status"
-        :class="{ 'is-empty': getListRecordLabel(findRecord(day.dateKey)) === '未入力' }"
-      >
-        <template v-if="getListRecordLabel(findRecord(day.dateKey)) !== '未入力'">
-          <span>{{ getRecordIcons(findRecord(day.dateKey)).join('') }}</span>
-          <span
-            v-if="getHeadacheLevelBadge(findRecord(day.dateKey))"
-            class="level-badge list-level-badge"
-            :class="`is-${getHeadacheLevelBadge(findRecord(day.dateKey))?.tone}`"
-          >
-            <span class="level-badge-text">
-              {{ getHeadacheLevelBadge(findRecord(day.dateKey))?.listLabel }}
+      <span class="diary-list-detail">
+        <span
+          class="diary-list-status"
+          :class="{ 'is-empty': getListRecordLabel(findRecord(day.dateKey)) === '未入力' }"
+        >
+          <template v-if="getListRecordLabel(findRecord(day.dateKey)) !== '未入力'">
+            <span>{{ getRecordIcons(findRecord(day.dateKey)).join('') }}</span>
+            <span
+              v-if="getHeadacheLevelBadge(findRecord(day.dateKey))"
+              class="level-badge list-level-badge"
+              :class="`is-${getHeadacheLevelBadge(findRecord(day.dateKey))?.tone}`"
+            >
+              <span class="level-badge-text">
+                {{ getHeadacheLevelBadge(findRecord(day.dateKey))?.listLabel }}
+              </span>
             </span>
-          </span>
-        </template>
-        <template v-else>未入力</template>
+          </template>
+          <template v-else>未入力</template>
+        </span>
+        <PressureValue
+          v-if="pressureEnabled"
+          :date="day.dateKey"
+          :location="pressureLocation"
+        />
       </span>
     </button>
   </div>

@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import PressureDisplay from './PressureDisplay.vue'
 import type { DayStatus, DiaryRecord } from '../types/diary'
+import type { PressureLocationId } from '../utils/pressure'
 
 const props = defineProps<{
   date: string
   dateLabel: string
   pressureEnabled: boolean
+  pressureLocation: PressureLocationId
   record: DiaryRecord
 }>()
 
@@ -71,7 +73,7 @@ const applySymptomLevel = (level: (typeof symptomLevelOptions)[number]) => {
     <div class="diary-form-header">
       <p>選択中の日付</p>
       <h2>{{ dateLabel }}</h2>
-      <PressureDisplay v-if="pressureEnabled" :date="date" />
+      <PressureDisplay v-if="pressureEnabled" :date="date" :location="pressureLocation" />
     </div>
 
     <fieldset class="status-field">

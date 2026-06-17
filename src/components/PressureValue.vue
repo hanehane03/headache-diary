@@ -9,13 +9,11 @@ const props = defineProps<{
 }>()
 
 const pressure = ref<number | null>(null)
-const isLoading = ref(false)
 const hasError = ref(false)
 
 watch(
   () => [props.date, props.location] as const,
   async ([date, location]) => {
-    isLoading.value = true
     hasError.value = false
     pressure.value = null
 
@@ -23,8 +21,6 @@ watch(
       pressure.value = await fetchSurfacePressure(date, location)
     } catch {
       hasError.value = true
-    } finally {
-      isLoading.value = false
     }
   },
   { immediate: true },
@@ -32,9 +28,5 @@ watch(
 </script>
 
 <template>
-  <p class="pressure-display">
-    <span v-if="isLoading">気圧: 取得中...</span>
-    <span v-else-if="hasError">気圧: 取得できませんでした</span>
-    <span v-else>気圧: {{ pressure }} hPa</span>
-  </p>
+  <span class="diary-list-pressure">{{ hasError || pressure === null ? '--' : `${pressure} hPa` }}</span>
 </template>

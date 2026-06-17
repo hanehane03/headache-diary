@@ -415,6 +415,19 @@ h1 {
   text-align: right;
 }
 
+.diary-list-detail {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+}
+
+.diary-list-pressure {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
 .diary-list-status.is-empty {
   color: var(--text-muted);
   font-size: 0.95rem;
@@ -640,6 +653,27 @@ h1 {
   accent-color: var(--primary);
 }
 
+.pressure-location-setting {
+  display: grid;
+  gap: 6px;
+}
+
+.pressure-location-setting span {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.pressure-location-setting select {
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--text);
+  font: inherit;
+  padding: 0 10px;
+}
+
 .backup-panel {
   display: grid;
   gap: 12px;
@@ -682,6 +716,7 @@ h1 {
 .settings-button:focus-visible,
 .settings-modal-header button:focus-visible,
 .experimental-setting:focus-within,
+.pressure-location-setting select:focus-visible,
 .view-switch button:focus-visible,
 .diary-list-row:focus-visible,
 .backup-actions button:focus-visible,

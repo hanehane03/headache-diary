@@ -7,6 +7,7 @@ import DiaryListView from './components/DiaryListView.vue'
 import PeriodSummary from './components/PeriodSummary.vue'
 import SettingsModal from './components/SettingsModal.vue'
 import type { DiaryRecord } from './types/diary'
+import type { PressureLocationId } from './utils/pressure'
 import { summarizePeriod } from './utils/summary'
 import { loadAppSettings, saveAppSettings } from './utils/settings'
 import { loadDiaryRecords, saveDiaryRecords } from './utils/storage'
@@ -25,6 +26,7 @@ const selectedDate = ref(toDateKey(today))
 const displayMode = ref<DisplayMode>('calendar')
 const isSettingsOpen = ref(false)
 const pressureEnabled = ref(initialSettings.pressureEnabled)
+const pressureLocation = ref<PressureLocationId>(initialSettings.pressureLocation)
 const summaryStartDate = ref(toDateKey(initialStartDate))
 const summaryEndDate = ref(toDateKey(today))
 const records = ref<DiaryRecord[]>(loadDiaryRecords())
@@ -48,6 +50,13 @@ const selectedRecord = computed<DiaryRecord>(() => {
     }
   )
 })
+
+const saveSettings = () => {
+  saveAppSettings({
+    pressureEnabled: pressureEnabled.value,
+    pressureLocation: pressureLocation.value,
+  })
+}
 
 const moveMonth = (offset: number) => {
   const nextDate = new Date(currentYear.value, currentMonth.value + offset, 1)
@@ -83,9 +92,12 @@ const restoreRecords = (restoredRecords: DiaryRecord[]) => {
 
 const updatePressureEnabled = (enabled: boolean) => {
   pressureEnabled.value = enabled
-  saveAppSettings({
-    pressureEnabled: enabled,
-  })
+  saveSettings()
+}
+
+const updatePressureLocation = (location: PressureLocationId) => {
+  pressureLocation.value = location
+  saveSettings()
 }
 </script>
 
@@ -151,6 +163,8 @@ const updatePressureEnabled = (enabled: boolean) => {
       <DiaryListView
         v-else
         v-model:selected-date="selectedDate"
+        :pressure-enabled="canShowPressure"
+        :pressure-location="pressureLocation"
         :records="records"
         :year="currentYear"
         :month="currentMonth"
@@ -162,6 +176,7 @@ const updatePressureEnabled = (enabled: boolean) => {
       :date="selectedDate"
       :date-label="selectedDateLabel"
       :pressure-enabled="canShowPressure"
+      :pressure-location="pressureLocation"
       :record="selectedRecord"
       @update:record="updateRecord"
     />
@@ -170,10 +185,12 @@ const updatePressureEnabled = (enabled: boolean) => {
       v-if="isSettingsOpen"
       :pressure-feature-available="FEATURES.pressure"
       :pressure-enabled="pressureEnabled"
+      :pressure-location="pressureLocation"
       :records="records"
       @close="isSettingsOpen = false"
       @restore="restoreRecords"
       @update:pressure-enabled="updatePressureEnabled"
+      @update:pressure-location="updatePressureLocation"
     />
   </main>
 </template>
