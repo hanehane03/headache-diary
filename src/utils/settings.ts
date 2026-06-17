@@ -3,6 +3,7 @@ import { isPressureCoordinates, type PressureCoordinates } from './pressure'
 const SETTINGS_KEY = 'headache-diary-settings'
 
 export interface PressureCurrentLocation extends PressureCoordinates {
+  address: string | null
   updatedAt: string
 }
 
@@ -33,7 +34,13 @@ const normalizeSettings = (settings: Record<string, unknown>): AppSettings => {
         ? settings.pressureEnabled
         : defaultSettings.pressureEnabled,
     pressureCurrentLocation: isPressureCurrentLocation(settings.pressureCurrentLocation)
-      ? settings.pressureCurrentLocation
+      ? {
+          ...settings.pressureCurrentLocation,
+          address:
+            typeof settings.pressureCurrentLocation.address === 'string'
+              ? settings.pressureCurrentLocation.address
+              : null,
+        }
       : null,
   }
 }

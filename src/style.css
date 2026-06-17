@@ -686,6 +686,11 @@ h1 {
   line-height: 1.45;
 }
 
+.current-location-address {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
 .location-error {
   margin: 0;
   color: #b42318;

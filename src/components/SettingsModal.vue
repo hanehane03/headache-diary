@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import BackupRestore from './BackupRestore.vue'
 import type { DiaryRecord } from '../types/diary'
+import { fetchAddressFromCoordinates } from '../utils/geolocation'
 import type { PressureCurrentLocation } from '../utils/settings'
 
 defineProps<{
@@ -39,6 +40,14 @@ const formatUpdatedAt = (value: string) => {
   return `${year}/${month}/${day} ${hours}:${minutes}`
 }
 
+const resolveAddress = async (lat: number, lon: number) => {
+  try {
+    return await fetchAddressFromCoordinates(lat, lon)
+  } catch {
+    return null
+  }
+}
+
 const requestCurrentLocation = () => {
   locationError.value = ''
 
@@ -50,11 +59,16 @@ const requestCurrentLocation = () => {
   isLocating.value = true
 
   navigator.geolocation.getCurrentPosition(
-    (position) => {
+    async (position) => {
+      const lat = Number(position.coords.latitude.toFixed(3))
+      const lon = Number(position.coords.longitude.toFixed(3))
+      const address = await resolveAddress(lat, lon)
+
       isLocating.value = false
       emit('update:pressureCurrentLocation', {
-        lat: Number(position.coords.latitude.toFixed(3)),
-        lon: Number(position.coords.longitude.toFixed(3)),
+        lat,
+        lon,
+        address,
         updatedAt: new Date().toISOString(),
       })
     },
@@ -99,8 +113,13 @@ const requestCurrentLocation = () => {
           <div class="current-location-card">
             <p v-if="!pressureCurrentLocation" class="current-location-empty">未設定</p>
             <div v-else class="current-location-values">
-              <p>緯度: {{ formatCoordinate(pressureCurrentLocation.lat) }}</p>
-              <p>経度: {{ formatCoordinate(pressureCurrentLocation.lon) }}</p>
+              <p v-if="pressureCurrentLocation.address" class="current-location-address">
+                {{ pressureCurrentLocation.address }}
+              </p>
+              <template v-else>
+                <p>緯度: {{ formatCoordinate(pressureCurrentLocation.lat) }}</p>
+                <p>経度: {{ formatCoordinate(pressureCurrentLocation.lon) }}</p>
+              </template>
               <p>最終取得: {{ formatUpdatedAt(pressureCurrentLocation.updatedAt) }}</p>
             </div>
           </div>
