@@ -136,6 +136,7 @@ const restoreRecords = (restoredRecords: DiaryRecord[]) => {
 
     <DiaryForm
       class="diary-section"
+      :date="selectedDate"
       :date-label="selectedDateLabel"
       :record="selectedRecord"
       @update:record="updateRecord"

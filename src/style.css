@@ -436,6 +436,13 @@ h1 {
   letter-spacing: 0;
 }
 
+.pressure-display {
+  margin: 2px 0 0;
+  color: var(--primary-strong);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
 .status-field {
   min-width: 0;
   margin: 0;
